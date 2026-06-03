@@ -9,13 +9,29 @@ import { toast } from "sonner";
 
 export default function AdminPanel() {
   const [, setLocation] = useLocation();
+  const [password, setPassword] = useState("");
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [selectedApp, setSelectedApp] = useState<any>(null);
   const [rejectionReason, setRejectionReason] = useState("");
+  const [notificationEmail, setNotificationEmail] = useState("");
 
   // 獲取所有申請
-  const { data: applicationsData, isLoading, refetch } = trpc.application.list.useQuery();
+  const { data: applicationsData, isLoading, refetch } = trpc.application.list.useQuery(undefined, {
+    enabled: isAuthenticated,
+  });
   const approveMutation = trpc.application.approve.useMutation();
   const rejectMutation = trpc.application.reject.useMutation();
+
+  const handleLogin = () => {
+    if (password === "pizzahut") {
+      setIsAuthenticated(true);
+      toast.success("登入成功");
+      setPassword("");
+    } else {
+      toast.error("密碼錯誤");
+      setPassword("");
+    }
+  };
 
   const applications = applicationsData?.data || [];
   const pendingApps = applications.filter((app: any) => app.status === "pending");
@@ -25,11 +41,6 @@ export default function AdminPanel() {
   const handleApprove = async () => {
     if (!selectedApp) {
       toast.error("請選擇申請");
-      return;
-    }
-
-    if (!selectedApp.applicantEmail) {
-      toast.error("申請者未提供郵箱地址，無法發送通知");
       return;
     }
 
@@ -54,11 +65,6 @@ export default function AdminPanel() {
   const handleReject = async () => {
     if (!selectedApp || !rejectionReason) {
       toast.error("請填寫所有必填欄位");
-      return;
-    }
-
-    if (!selectedApp.applicantEmail) {
-      toast.error("申請者未提供郵箱地址，無法發送通知");
       return;
     }
 
@@ -99,6 +105,57 @@ export default function AdminPanel() {
       </span>
     );
   };
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-white flex flex-col items-center justify-center px-4">
+        <style>{`
+          body {
+            font-family: 'Noto Serif TC', 'Microsoft JhengHei', 'SimSun', serif;
+          }
+        `}</style>
+
+        <div className="max-w-md w-full space-y-8">
+          <div className="text-center space-y-2">
+            <h1 className="text-3xl font-bold text-black">管理員登入</h1>
+            <p className="text-gray-600">請輸入密碼以存取管理員面板</p>
+          </div>
+
+          <Card className="border border-gray-200 p-8 space-y-6">
+            <div className="space-y-3">
+              <label className="block text-base font-semibold text-black">
+                密碼
+              </label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                onKeyPress={(e) => e.key === "Enter" && handleLogin()}
+                placeholder="輸入管理員密碼"
+                className="w-full border border-gray-300 rounded p-3 text-base"
+                autoFocus
+              />
+            </div>
+
+            <Button
+              onClick={handleLogin}
+              className="w-full bg-black text-white hover:bg-gray-800 py-3 text-base font-semibold"
+            >
+              登入
+            </Button>
+          </Card>
+
+          <Button
+            onClick={() => setLocation("/")}
+            variant="outline"
+            className="w-full border border-gray-300 text-black hover:bg-gray-100"
+          >
+            返回首頁
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white flex flex-col px-4 py-8">
@@ -214,18 +271,10 @@ export default function AdminPanel() {
 
                 {selectedApp.status === "pending" && (
                   <>
-                    {!selectedApp.applicantEmail && (
-                      <div className="bg-red-50 border border-red-200 p-3 rounded">
-                        <p className="text-sm text-red-700">
-                          ⚠️ 申請者未提供郵箱地址，無法發送通知
-                        </p>
-                      </div>
-                    )}
-
                     <div className="space-y-2">
                       <Button
                         onClick={handleApprove}
-                        disabled={approveMutation.isPending || !selectedApp.applicantEmail}
+                        disabled={approveMutation.isPending}
                         className="w-full bg-green-600 text-white hover:bg-green-700 py-2"
                       >
                         {approveMutation.isPending ? "處理中..." : "批准申請"}
@@ -244,7 +293,7 @@ export default function AdminPanel() {
                       />
                       <Button
                         onClick={handleReject}
-                        disabled={rejectMutation.isPending || !rejectionReason || !selectedApp.applicantEmail}
+                        disabled={rejectMutation.isPending || !rejectionReason}
                         className="w-full bg-red-600 text-white hover:bg-red-700 py-2"
                       >
                         {rejectMutation.isPending ? "處理中..." : "拒絕申請"}

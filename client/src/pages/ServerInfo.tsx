@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { useLocation } from "wouter";
 import { toast } from "sonner";
 
@@ -12,48 +11,10 @@ interface ServerInfoProps {
 
 export default function ServerInfo({ gamertag, xboxAccountId }: ServerInfoProps) {
   const [, setLocation] = useLocation();
-  const [aerternosUsername, setAerternosUsername] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSaveAndEmail = async () => {
-    if (!aerternosUsername.trim()) {
-      toast.error("請輸入 Aternos 用戶名稱");
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      // 構建 Gmail 郵件連結
-      const recipientEmail = "lan.2015.se@gmail.com";
-      const subject = `Pizza MC 伺服器申請 - ${gamertag}`;
-      const body = `
-申請者：${gamertag}
-Aternos 用戶名稱：${aerternosUsername.trim()}
-
-伺服器資訊：
-地址：pizza-mc.aternos.me
-連接埠：23775
-
-請使用上述 Aternos 用戶名稱註冊 Aternos 帳號並加入伺服器。
-      `.trim();
-
-      // 使用 mailto 協議打開 Gmail
-      const mailtoLink = `https://mail.google.com/mail/?view=cm&fs=1&to=${recipientEmail}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-      
-      window.open(mailtoLink, "_blank");
-      
-      toast.success("已打開 Gmail，請完成郵件發送");
-      
-      // 延遲後返回首頁
-      setTimeout(() => {
-        setLocation("/");
-      }, 2000);
-    } catch (error) {
-      toast.error("發生錯誤");
-      console.error(error);
-    } finally {
-      setIsLoading(false);
-    }
+  const handleReturnHome = () => {
+    setLocation("/");
   };
 
   return (
@@ -68,7 +29,7 @@ Aternos 用戶名稱：${aerternosUsername.trim()}
         {/* 返回按鈕 */}
         <Button
           variant="ghost"
-          onClick={() => setLocation("/")}
+          onClick={handleReturnHome}
           className="text-black hover:bg-gray-100"
         >
           ← 返回
@@ -80,71 +41,61 @@ Aternos 用戶名稱：${aerternosUsername.trim()}
           <p className="text-lg text-gray-600">Thank you for your participation.</p>
         </div>
 
-        {/* 伺服器資訊卡片 */}
+        {/* 成功卡片 */}
+        <Card className="bg-green-50 border border-green-200 p-8 space-y-4">
+          <h2 className="text-2xl font-bold text-green-800">✓ 申請已成功提交</h2>
+          <p className="text-green-700 leading-relaxed">
+            我們已收到您的申請。管理員將在 24-48 小時內審核您的申請。
+          </p>
+          <p className="text-green-700 leading-relaxed">
+            <strong>審核結果和伺服器資訊將通過郵件發送至您提供的郵箱地址。</strong>
+          </p>
+        </Card>
+
+        {/* 準備說明卡片 */}
         <Card className="border border-gray-200 p-8 space-y-6">
           <div className="space-y-4">
-            <h2 className="text-xl font-semibold text-black">伺服器資訊</h2>
+            <h2 className="text-2xl font-bold text-black">準備加入伺服器</h2>
             
-            <div className="space-y-3">
+            <div className="space-y-4">
               <div className="bg-gray-50 p-4 rounded">
-                <p className="text-sm text-gray-600 mb-1">伺服器地址</p>
-                <p className="text-lg font-mono text-black font-semibold">pizza-mc.aternos.me</p>
+                <p className="text-sm font-semibold text-gray-700 mb-2">1️⃣ 註冊 Aternos 帳號</p>
+                <p className="text-sm text-gray-600">
+                  訪問 <a href="https://aternos.org" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">aternos.org</a> 並使用您想要的用戶名稱註冊帳號。
+                </p>
               </div>
               
               <div className="bg-gray-50 p-4 rounded">
-                <p className="text-sm text-gray-600 mb-1">連接埠</p>
-                <p className="text-lg font-mono text-black font-semibold">23775</p>
+                <p className="text-sm font-semibold text-gray-700 mb-2">2️⃣ 等待審核結果</p>
+                <p className="text-sm text-gray-600">
+                  我們的管理員將審核您的申請，並通過郵件發送伺服器地址、連接埠和進一步的說明。
+                </p>
+              </div>
+              
+              <div className="bg-gray-50 p-4 rounded">
+                <p className="text-sm font-semibold text-gray-700 mb-2">3️⃣ 加入遊戲</p>
+                <p className="text-sm text-gray-600">
+                  使用郵件中提供的伺服器地址和連接埠在 Minecraft 中加入伺服器。
+                </p>
               </div>
             </div>
           </div>
-
-          {/* Aternos 帳號信息 */}
-          <div className="border-t border-gray-200 pt-6 space-y-4">
-            <div className="bg-yellow-50 border border-yellow-200 p-4 rounded">
-              <p className="text-sm text-yellow-800 font-semibold mb-2">⚠️ 重要提示</p>
-              <p className="text-sm text-yellow-800 leading-relaxed">
-                要存取伺服器，您必須先註冊 Aternos 帳號。請在下方輸入您的 Aternos 用戶名稱，我們會將相關資訊發送至您的郵箱。
-              </p>
-            </div>
-
-            <div className="space-y-3">
-              <label className="block text-base font-semibold text-black">
-                Aternos 用戶名稱
-              </label>
-              <Input
-                type="text"
-                value={aerternosUsername}
-                onChange={(e) => setAerternosUsername(e.target.value)}
-                placeholder="輸入您的 Aternos 用戶名稱"
-                className="border border-gray-300 rounded p-3 text-base"
-              />
-            </div>
-
-            <div className="bg-gray-50 p-3 rounded">
-              <p className="text-sm text-gray-600">
-                📧 聯絡郵箱：<span className="font-mono font-semibold">lan.2015.se@gmail.com</span>
-              </p>
-            </div>
-          </div>
-
-          {/* 儲存按鈕 */}
-          <div className="pt-4">
-            <Button
-              onClick={handleSaveAndEmail}
-              disabled={isLoading || !aerternosUsername.trim()}
-              className="w-full bg-black text-white hover:bg-gray-800 py-6 text-lg font-semibold"
-            >
-              {isLoading ? "處理中..." : "儲存並發送郵件"}
-            </Button>
-          </div>
         </Card>
 
-        {/* 下一步說明 */}
+        {/* 提示信息 */}
         <Card className="bg-blue-50 border border-blue-200 p-4">
           <p className="text-sm text-blue-800 leading-relaxed">
-            💡 <strong>下一步：</strong>按下「儲存並發送郵件」後，您的 Aternos 用戶名稱將通過郵件發送。請確保您已在 Aternos 上註冊帳號，然後使用上述伺服器地址和連接埠加入遊戲。
+            💡 <strong>重要提示：</strong>伺服器資訊不會在此頁面顯示。請檢查您的郵箱（包括垃圾郵件資料夾）以獲取審核結果和伺服器詳細資訊。
           </p>
         </Card>
+
+        {/* 返回首頁按鈕 */}
+        <Button
+          onClick={handleReturnHome}
+          className="w-full bg-black text-white hover:bg-gray-800 py-3 text-base font-semibold"
+        >
+          返回首頁
+        </Button>
       </div>
     </div>
   );

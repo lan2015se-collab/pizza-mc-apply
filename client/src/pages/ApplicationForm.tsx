@@ -28,6 +28,18 @@ export default function ApplicationForm({ gamertag, xboxAccountId }: Application
       return;
     }
 
+    if (!applicantEmail.trim()) {
+      toast.error("請填寫郵箱地址");
+      return;
+    }
+
+    // 簡單的郵箱驗證
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(applicantEmail.trim())) {
+      toast.error("請輸入有效的郵箱地址");
+      return;
+    }
+
     if (!notionChecked) {
       toast.error("請勾選已閱讀 Notion 資訊頁面");
       return;
@@ -39,13 +51,13 @@ export default function ApplicationForm({ gamertag, xboxAccountId }: Application
         gamertag,
         xboxAccountId,
         reason: reason.trim(),
-        applicantEmail: applicantEmail.trim() || undefined,
+        applicantEmail: applicantEmail.trim(),
       });
 
       if (result.success) {
-        toast.success("申請已提交");
-        // 導向伺服器資訊頁面
-        setLocation(`/server-info?gamertag=${encodeURIComponent(gamertag)}&xboxAccountId=${encodeURIComponent(xboxAccountId)}`);
+        toast.success("申請已提交，請等待審核結果");
+        // 導向成功頁面
+        setLocation("/");
       } else {
         toast.error(result.error || "申請提交失敗");
       }
@@ -99,17 +111,17 @@ export default function ApplicationForm({ gamertag, xboxAccountId }: Application
           {/* 郵箱地址 */}
           <div className="space-y-3">
             <label className="block text-lg font-semibold text-black">
-              郵箱地址 <span className="text-gray-500 font-normal">(選填)</span>
+              郵箱地址 <span className="text-red-600">*</span>
             </label>
             <input
               type="email"
               value={applicantEmail}
               onChange={(e) => setApplicantEmail(e.target.value)}
-              placeholder="您的郵箱地址（用於接收審核結果通知）"
+              placeholder="您的郵箱地址"
               className="w-full border border-gray-300 rounded p-3 text-base"
             />
             <p className="text-sm text-gray-600">
-              💡 提供郵箱地址後，審核結果將通過郵件通知您
+              💡 審核結果將通過郵件發送至此地址
             </p>
           </div>
 
@@ -133,10 +145,10 @@ export default function ApplicationForm({ gamertag, xboxAccountId }: Application
           <div className="pt-4">
             <Button
               onClick={handleSubmit}
-              disabled={isLoading || !reason.trim() || !notionChecked}
+              disabled={isLoading || !reason.trim() || !applicantEmail.trim() || !notionChecked}
               className="w-full bg-black text-white hover:bg-gray-800 py-6 text-lg font-semibold"
             >
-              {isLoading ? "提交中..." : "繼續"}
+              {isLoading ? "提交中..." : "提交申請"}
             </Button>
           </div>
         </Card>

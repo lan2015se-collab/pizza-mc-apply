@@ -64,38 +64,14 @@ export default function Home() {
           {isLoading ? "正在重導向..." : "使用 Xbox 帳號登入"}
         </Button>
 
-        {/* 導航連結 */}
-        <div className="grid grid-cols-2 gap-3">
-          <Button
-            onClick={() => setLocation("/players")}
-            variant="outline"
-            className="border border-gray-300 text-black hover:bg-gray-100"
-          >
-            查看玩家名單
-          </Button>
-          <Button
-            onClick={() => setLocation("/admin")}
-            variant="outline"
-            className="border border-gray-300 text-black hover:bg-gray-100"
-          >
-            管理員面板
-          </Button>
-        </div>
-
-        {/* 伺服器資訊 */}
-        <div className="mt-12 pt-8 border-t border-gray-200">
-          <h2 className="text-lg font-semibold text-black mb-4">伺服器資訊</h2>
-          <div className="space-y-3 text-left">
-            <div className="bg-gray-50 p-3 rounded">
-              <p className="text-sm text-gray-600">伺服器地址</p>
-              <p className="text-base font-mono text-black">pizza-mc.aternos.me</p>
-            </div>
-            <div className="bg-gray-50 p-3 rounded">
-              <p className="text-sm text-gray-600">連接埠</p>
-              <p className="text-base font-mono text-black">23775</p>
-            </div>
-          </div>
-        </div>
+        {/* 查看玩家名單連結 */}
+        <Button
+          onClick={() => setLocation("/players")}
+          variant="outline"
+          className="w-full border border-gray-300 text-black hover:bg-gray-100"
+        >
+          查看已批准玩家名單
+        </Button>
       </div>
     </div>
   );
