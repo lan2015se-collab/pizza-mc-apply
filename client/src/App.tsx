@@ -10,6 +10,8 @@ import ApplicationForm from "./pages/ApplicationForm";
 import ServerInfo from "./pages/ServerInfo";
 import PlayerList from "./pages/PlayerList";
 import AdminPanel from "./pages/AdminPanel";
+import ApplicationStatus from "./pages/ApplicationStatus";
+import AdminDashboard from "./pages/AdminDashboard";
 
 function Router() {
   const [location] = useLocation();
@@ -44,6 +46,8 @@ function Router() {
       />
       <Route path={"/players"} component={PlayerList} />
       <Route path={"/admin"} component={AdminPanel} />
+      <Route path={"/status"} component={ApplicationStatus} />
+      <Route path={"/admin/dashboard"} component={AdminDashboard} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />

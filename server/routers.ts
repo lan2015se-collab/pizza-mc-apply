@@ -14,6 +14,7 @@ import {
   getApprovedApplications,
 } from "./db";
 import { sendApprovalNotification, sendRejectionNotification } from "./email-service";
+import { getApplicationStats } from "./db-stats";
 
 /**
  * 管理員專用 procedure
@@ -286,8 +287,66 @@ export const appRouter = router({
             error: error instanceof Error ? error.message : "Unknown error",
           };
         }
+            }),
+  }),
+  // 申請狀態查詢
+  status: router({
+    getByGamertag: publicProcedure
+      .input(z.object({
+        gamertag: z.string().min(1),
+      }))
+      .query(async ({ input }) => {
+        try {
+          const app = await getApplicationByGamertag(input.gamertag);
+          if (!app) {
+            return {
+              success: false,
+              error: "找不到申請記錄",
+            };
+          }
+          return {
+            success: true,
+            data: {
+              gamertag: app.gamertag,
+              status: app.status,
+              reason: app.reason,
+              appliedAt: app.createdAt,
+              serverAddress: app.status === "approved" ? "pizza-mc.aternos.me" : undefined,
+              serverPort: app.status === "approved" ? 23775 : undefined,
+            },
+          };
+        } catch (error) {
+          console.error("Failed to get application status:", error);
+          return {
+            success: false,
+            error: error instanceof Error ? error.message : "Unknown error",
+          };
+        }
       }),
   }),
+  // 管理員統計
+  admin: router({
+    getStats: adminProcedure.query(async () => {
+      try {
+        const stats = await getApplicationStats();
+        if (!stats) {
+          return {
+            success: false,
+            error: "無法獲取統計數據",
+          };
+        }
+        return {
+          success: true,
+          data: stats,
+        };
+      } catch (error) {
+        console.error("Failed to get admin stats:", error);
+        return {
+          success: false,
+          error: error instanceof Error ? error.message : "Unknown error",
+        };
+      }
+    }),
+  }),
 });
-
 export type AppRouter = typeof appRouter;

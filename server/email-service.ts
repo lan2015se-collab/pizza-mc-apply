@@ -1,10 +1,11 @@
 /**
  * 郵件通知服務
- * 使用 Manus 內建郵件 API 發送通知
+ * 使用 SendGrid 發送真實郵件通知
  */
 
 import { getDb } from "./db";
 import { emailLogs, InsertEmailLog } from "../drizzle/schema";
+import { sendEmail, sendApprovalEmail, sendRejectionEmail } from "./sendgrid-service";
 
 interface EmailOptions {
   to: string;
@@ -35,10 +36,13 @@ export async function sendEmailNotification(options: EmailOptions): Promise<bool
 
     await db.insert(emailLogs).values(emailLog);
 
-    // 使用 Manus 內建郵件 API 發送
-    // 注意：實際應用中需要配置 SMTP 或使用第三方郵件服務
-    // 這裡使用 Manus 提供的郵件服務
-    const response = await sendViaForgeAPI(options);
+    // 使用 SendGrid 發送郵件
+    const response = await sendEmail({
+      to: options.to,
+      subject: options.subject,
+      htmlContent: formatEmailBody(options.body),
+      textContent: options.body,
+    });
 
     if (response.success) {
       // 更新郵件日誌狀態為已發送
@@ -70,48 +74,6 @@ export async function sendEmailNotification(options: EmailOptions): Promise<bool
   } catch (error) {
     console.error("[Email] Error sending notification:", error);
     return false;
-  }
-}
-
-/**
- * 通過 Manus Forge API 發送郵件
- */
-async function sendViaForgeAPI(options: EmailOptions): Promise<{ success: boolean; error?: string }> {
-  try {
-    const forgeApiUrl = process.env.BUILT_IN_FORGE_API_URL;
-    const forgeApiKey = process.env.BUILT_IN_FORGE_API_KEY;
-
-    if (!forgeApiUrl || !forgeApiKey) {
-      throw new Error("Forge API credentials not configured");
-    }
-
-    const response = await fetch(`${forgeApiUrl}/email/send`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${forgeApiKey}`,
-      },
-      body: JSON.stringify({
-        to: options.to,
-        subject: options.subject,
-        html: formatEmailBody(options.body),
-      }),
-    });
-
-    if (!response.ok) {
-      const error = await response.text();
-      return {
-        success: false,
-        error: `HTTP ${response.status}: ${error}`,
-      };
-    }
-
-    return { success: true };
-  } catch (error) {
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : "Unknown error",
-    };
   }
 }
 
@@ -200,29 +162,58 @@ export async function sendApprovalNotification(
   email: string,
   applicationId: number
 ): Promise<boolean> {
-  const body = `
-親愛的 ${gamertag}，
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Email] Database not available");
+    return false;
+  }
 
-恭喜！您的 Pizza MC 伺服器申請已被批准。
+  try {
+    // 記錄郵件發送日誌
+    const emailLog: InsertEmailLog = {
+      applicationId,
+      recipientEmail: email,
+      subject: "✓ Pizza MC 伺服器申請已批准",
+      body: `恭喜 ${gamertag}！您的申請已被批准。`,
+      status: "pending",
+    };
 
-伺服器資訊：
-- 伺服器地址：pizza-mc.aternos.me
-- 連接埠：23775
+    await db.insert(emailLogs).values(emailLog);
 
-您現在可以使用您的 Minecraft 帳號加入伺服器。請確保您已在 Aternos 上註冊帳號。
+    // 使用 SendGrid 發送批准郵件
+    const response = await sendApprovalEmail(gamertag, email);
 
-祝您遊戲愉快！
+    if (response.success) {
+      // 更新郵件日誌狀態為已發送
+      const { eq } = await import("drizzle-orm");
+      await db
+        .update(emailLogs)
+        .set({
+          status: "sent",
+          sentAt: new Date(),
+        })
+        .where(eq(emailLogs.recipientEmail, email));
 
----
-Pizza MC 伺服器管理團隊
-  `;
+      console.log(`[Email] Approval notification sent to ${email}`);
+      return true;
+    } else {
+      // 更新郵件日誌狀態為失敗
+      const { eq } = await import("drizzle-orm");
+      await db
+        .update(emailLogs)
+        .set({
+          status: "failed",
+          errorMessage: response.error,
+        })
+        .where(eq(emailLogs.recipientEmail, email));
 
-  return sendEmailNotification({
-    to: email,
-    subject: "Pizza MC 伺服器申請 - 批准通知",
-    body,
-    applicationId,
-  });
+      console.error(`[Email] Failed to send approval notification:`, response.error);
+      return false;
+    }
+  } catch (error) {
+    console.error("[Email] Error sending approval notification:", error);
+    return false;
+  }
 }
 
 /**
@@ -234,25 +225,56 @@ export async function sendRejectionNotification(
   reason: string,
   applicationId: number
 ): Promise<boolean> {
-  const body = `
-親愛的 ${gamertag}，
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Email] Database not available");
+    return false;
+  }
 
-感謝您對 Pizza MC 伺服器的興趣。
+  try {
+    // 記錄郵件發送日誌
+    const emailLog: InsertEmailLog = {
+      applicationId,
+      recipientEmail: email,
+      subject: "✗ Pizza MC 伺服器申請已拒絕",
+      body: `${gamertag}，您的申請未被批准。原因：${reason}`,
+      status: "pending",
+    };
 
-很遺憾，您的申請未被批准。
+    await db.insert(emailLogs).values(emailLog);
 
-拒絕原因：${reason || "不符合伺服器要求"}
+    // 使用 SendGrid 發送拒絕郵件
+    const response = await sendRejectionEmail(gamertag, email, reason);
 
-如您對此決定有疑問，歡迎聯絡我們。
+    if (response.success) {
+      // 更新郵件日誌狀態為已發送
+      const { eq } = await import("drizzle-orm");
+      await db
+        .update(emailLogs)
+        .set({
+          status: "sent",
+          sentAt: new Date(),
+        })
+        .where(eq(emailLogs.recipientEmail, email));
 
----
-Pizza MC 伺服器管理團隊
-  `;
+      console.log(`[Email] Rejection notification sent to ${email}`);
+      return true;
+    } else {
+      // 更新郵件日誌狀態為失敗
+      const { eq } = await import("drizzle-orm");
+      await db
+        .update(emailLogs)
+        .set({
+          status: "failed",
+          errorMessage: response.error,
+        })
+        .where(eq(emailLogs.recipientEmail, email));
 
-  return sendEmailNotification({
-    to: email,
-    subject: "Pizza MC 伺服器申請 - 未批准通知",
-    body,
-    applicationId,
-  });
+      console.error(`[Email] Failed to send rejection notification:`, response.error);
+      return false;
+    }
+  } catch (error) {
+    console.error("[Email] Error sending rejection notification:", error);
+    return false;
+  }
 }
