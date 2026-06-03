@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, InsertApplication, applications } from "../drizzle/schema";
+import { InsertUser, users, InsertApplication, applications, emailLogs, InsertEmailLog } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -128,6 +128,28 @@ export async function getApplications() {
 }
 
 /**
+ * Get approved applications (for public player list)
+ */
+export async function getApprovedApplications() {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot get approved applications: database not available");
+    return [];
+  }
+
+  try {
+    const result = await db
+      .select()
+      .from(applications)
+      .where(eq(applications.status, "approved"));
+    return result;
+  } catch (error) {
+    console.error("[Database] Failed to get approved applications:", error);
+    throw error;
+  }
+}
+
+/**
  * Get application by gamertag
  */
 export async function getApplicationByGamertag(gamertag: string) {
@@ -142,6 +164,88 @@ export async function getApplicationByGamertag(gamertag: string) {
     return result.length > 0 ? result[0] : undefined;
   } catch (error) {
     console.error("[Database] Failed to get application:", error);
+    throw error;
+  }
+}
+
+/**
+ * Get application by ID
+ */
+export async function getApplicationById(id: number) {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot get application: database not available");
+    return undefined;
+  }
+
+  try {
+    const result = await db.select().from(applications).where(eq(applications.id, id)).limit(1);
+    return result.length > 0 ? result[0] : undefined;
+  } catch (error) {
+    console.error("[Database] Failed to get application:", error);
+    throw error;
+  }
+}
+
+/**
+ * Update application status
+ */
+export async function updateApplicationStatus(id: number, status: "pending" | "approved" | "rejected") {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot update application: database not available");
+    return undefined;
+  }
+
+  try {
+    const result = await db
+      .update(applications)
+      .set({ status })
+      .where(eq(applications.id, id));
+    return result;
+  } catch (error) {
+    console.error("[Database] Failed to update application:", error);
+    throw error;
+  }
+}
+
+/**
+ * Create email log entry
+ */
+export async function createEmailLog(log: InsertEmailLog) {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot create email log: database not available");
+    return undefined;
+  }
+
+  try {
+    const result = await db.insert(emailLogs).values(log);
+    return result;
+  } catch (error) {
+    console.error("[Database] Failed to create email log:", error);
+    throw error;
+  }
+}
+
+/**
+ * Get email logs for an application
+ */
+export async function getEmailLogsForApplication(applicationId: number) {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot get email logs: database not available");
+    return [];
+  }
+
+  try {
+    const result = await db
+      .select()
+      .from(emailLogs)
+      .where(eq(emailLogs.applicationId, applicationId));
+    return result;
+  } catch (error) {
+    console.error("[Database] Failed to get email logs:", error);
     throw error;
   }
 }

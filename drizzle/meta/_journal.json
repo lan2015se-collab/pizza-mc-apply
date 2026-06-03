@@ -15,6 +15,20 @@
       "when": 1780525025254,
       "tag": "0001_talented_zombie",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1780525613566,
+      "tag": "0002_busy_skreet",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1780525900351,
+      "tag": "0003_faithful_strong_guy",
+      "breakpoints": true
     }
   ]
 }

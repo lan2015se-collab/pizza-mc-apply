@@ -8,6 +8,8 @@ import Home from "./pages/Home";
 import AuthCallback from "./pages/AuthCallback";
 import ApplicationForm from "./pages/ApplicationForm";
 import ServerInfo from "./pages/ServerInfo";
+import PlayerList from "./pages/PlayerList";
+import AdminPanel from "./pages/AdminPanel";
 
 function Router() {
   const [location] = useLocation();
@@ -40,6 +42,8 @@ function Router() {
           />
         )}
       />
+      <Route path={"/players"} component={PlayerList} />
+      <Route path={"/admin"} component={AdminPanel} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />

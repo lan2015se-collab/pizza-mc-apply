@@ -64,6 +64,24 @@ export default function Home() {
           {isLoading ? "正在重導向..." : "使用 Xbox 帳號登入"}
         </Button>
 
+        {/* 導航連結 */}
+        <div className="grid grid-cols-2 gap-3">
+          <Button
+            onClick={() => setLocation("/players")}
+            variant="outline"
+            className="border border-gray-300 text-black hover:bg-gray-100"
+          >
+            查看玩家名單
+          </Button>
+          <Button
+            onClick={() => setLocation("/admin")}
+            variant="outline"
+            className="border border-gray-300 text-black hover:bg-gray-100"
+          >
+            管理員面板
+          </Button>
+        </div>
+
         {/* 伺服器資訊 */}
         <div className="mt-12 pt-8 border-t border-gray-200">
           <h2 className="text-lg font-semibold text-black mb-4">伺服器資訊</h2>

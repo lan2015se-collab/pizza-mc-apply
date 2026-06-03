@@ -16,6 +16,7 @@ export default function ApplicationForm({ gamertag, xboxAccountId }: Application
   const [, setLocation] = useLocation();
   const [reason, setReason] = useState("");
   const [notionChecked, setNotionChecked] = useState(false);
+  const [applicantEmail, setApplicantEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const submitMutation = trpc.application.submit.useMutation();
@@ -38,6 +39,7 @@ export default function ApplicationForm({ gamertag, xboxAccountId }: Application
         gamertag,
         xboxAccountId,
         reason: reason.trim(),
+        applicantEmail: applicantEmail.trim() || undefined,
       });
 
       if (result.success) {
@@ -92,6 +94,23 @@ export default function ApplicationForm({ gamertag, xboxAccountId }: Application
               placeholder="請說明您想加入 Pizza MC 伺服器的原因..."
               className="min-h-32 border border-gray-300 rounded p-3 text-base font-serif"
             />
+          </div>
+
+          {/* 郵箱地址 */}
+          <div className="space-y-3">
+            <label className="block text-lg font-semibold text-black">
+              郵箱地址 <span className="text-gray-500 font-normal">(選填)</span>
+            </label>
+            <input
+              type="email"
+              value={applicantEmail}
+              onChange={(e) => setApplicantEmail(e.target.value)}
+              placeholder="您的郵箱地址（用於接收審核結果通知）"
+              className="w-full border border-gray-300 rounded p-3 text-base"
+            />
+            <p className="text-sm text-gray-600">
+              💡 提供郵箱地址後，審核結果將通過郵件通知您
+            </p>
           </div>
 
           {/* Notion 勾選框 */}

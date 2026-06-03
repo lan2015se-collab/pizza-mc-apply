@@ -39,6 +39,8 @@ export const applications = mysqlTable("applications", {
   reason: text("reason").notNull(),
   /** Aternos username provided by the applicant */
   aerternosUsername: varchar("aerternosUsername", { length: 255 }),
+  /** Applicant email for notifications */
+  applicantEmail: varchar("applicantEmail", { length: 320 }),
   /** Application status */
   status: mysqlEnum("status", ["pending", "approved", "rejected"]).default("pending").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
@@ -47,3 +49,28 @@ export const applications = mysqlTable("applications", {
 
 export type Application = typeof applications.$inferSelect;
 export type InsertApplication = typeof applications.$inferInsert;
+
+/**
+ * Email notification log table.
+ * Tracks all email notifications sent to applicants.
+ */
+export const emailLogs = mysqlTable("emailLogs", {
+  id: int("id").autoincrement().primaryKey(),
+  /** Reference to application */
+  applicationId: int("applicationId").notNull(),
+  /** Recipient email address */
+  recipientEmail: varchar("recipientEmail", { length: 320 }).notNull(),
+  /** Email subject */
+  subject: text("subject").notNull(),
+  /** Email body */
+  body: text("body").notNull(),
+  /** Email status: sent, failed, pending */
+  status: mysqlEnum("status", ["pending", "sent", "failed"]).default("pending").notNull(),
+  /** Error message if failed */
+  errorMessage: text("errorMessage"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  sentAt: timestamp("sentAt"),
+});
+
+export type EmailLog = typeof emailLogs.$inferSelect;
+export type InsertEmailLog = typeof emailLogs.$inferInsert;

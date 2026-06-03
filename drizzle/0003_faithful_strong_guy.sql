@@ -1,0 +1,1 @@
+ALTER TABLE `applications` ADD `applicantEmail` varchar(320);
