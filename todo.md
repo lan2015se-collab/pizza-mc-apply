@@ -28,9 +28,9 @@
 - [x] 設定表格欄位（gamertag, reason, aternos_username, created_at)）
 
 ## GitHub 與部署
-- [ ] 建立 GitHub 儲存庫 pizza-mc-apply
-- [ ] 推送所有程式碼至 GitHub
-- [ ] 驗證部署成功
+- [x] 建立 GitHub 儲存庫 pizza-mc-apply
+- [x] 推送所有程式碼至 GitHub
+- [x] 驗證部署成功
 
 ## 已完成
 - [x] 初始化 WebDev 專案（web-db-user 架構）
