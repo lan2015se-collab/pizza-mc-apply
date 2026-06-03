@@ -25,4 +25,25 @@ export const users = mysqlTable("users", {
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 
-// TODO: Add your tables here
+/**
+ * Minecraft server applications table.
+ * Stores user applications to join the Pizza MC server.
+ */
+export const applications = mysqlTable("applications", {
+  id: int("id").autoincrement().primaryKey(),
+  /** Xbox Gamertag of the applicant */
+  gamertag: varchar("gamertag", { length: 255 }).notNull(),
+  /** User's Microsoft/Xbox account ID */
+  xboxAccountId: varchar("xboxAccountId", { length: 255 }).notNull(),
+  /** Reason for joining the server */
+  reason: text("reason").notNull(),
+  /** Aternos username provided by the applicant */
+  aerternosUsername: varchar("aerternosUsername", { length: 255 }),
+  /** Application status */
+  status: mysqlEnum("status", ["pending", "approved", "rejected"]).default("pending").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Application = typeof applications.$inferSelect;
+export type InsertApplication = typeof applications.$inferInsert;

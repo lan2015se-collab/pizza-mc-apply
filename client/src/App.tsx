@@ -1,16 +1,45 @@
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
-import { Route, Switch } from "wouter";
+import { Route, Switch, useLocation } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
+import AuthCallback from "./pages/AuthCallback";
+import ApplicationForm from "./pages/ApplicationForm";
+import ServerInfo from "./pages/ServerInfo";
 
 function Router() {
-  // make sure to consider if you need authentication for certain routes
+  const [location] = useLocation();
+  
+  // 從 URL 查詢參數提取 gamertag 和 xboxAccountId
+  const getQueryParam = (param: string) => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get(param) || "";
+  };
+
   return (
     <Switch>
       <Route path={"/"} component={Home} />
+      <Route path={"/auth/callback"} component={AuthCallback} />
+      <Route 
+        path={"/application"} 
+        component={() => (
+          <ApplicationForm
+            gamertag={getQueryParam("gamertag")}
+            xboxAccountId={getQueryParam("xboxAccountId")}
+          />
+        )}
+      />
+      <Route 
+        path={"/server-info"} 
+        component={() => (
+          <ServerInfo
+            gamertag={getQueryParam("gamertag")}
+            xboxAccountId={getQueryParam("xboxAccountId")}
+          />
+        )}
+      />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
@@ -18,17 +47,11 @@ function Router() {
   );
 }
 
-// NOTE: About Theme
-// - First choose a default theme according to your design style (dark or light bg), than change color palette in index.css
-//   to keep consistent foreground/background color across components
-// - If you want to make theme switchable, pass `switchable` ThemeProvider and use `useTheme` hook
-
 function App() {
   return (
     <ErrorBoundary>
       <ThemeProvider
         defaultTheme="light"
-        // switchable
       >
         <TooltipProvider>
           <Toaster />

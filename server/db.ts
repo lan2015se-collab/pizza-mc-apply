@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users } from "../drizzle/schema";
+import { InsertUser, users, InsertApplication, applications } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -89,4 +89,59 @@ export async function getUserByOpenId(openId: string) {
   return result.length > 0 ? result[0] : undefined;
 }
 
-// TODO: add feature queries here as your schema grows.
+/**
+ * Create a new application
+ */
+export async function createApplication(app: InsertApplication) {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot create application: database not available");
+    return undefined;
+  }
+
+  try {
+    const result = await db.insert(applications).values(app);
+    return result;
+  } catch (error) {
+    console.error("[Database] Failed to create application:", error);
+    throw error;
+  }
+}
+
+/**
+ * Get all applications
+ */
+export async function getApplications() {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot get applications: database not available");
+    return [];
+  }
+
+  try {
+    const result = await db.select().from(applications);
+    return result;
+  } catch (error) {
+    console.error("[Database] Failed to get applications:", error);
+    throw error;
+  }
+}
+
+/**
+ * Get application by gamertag
+ */
+export async function getApplicationByGamertag(gamertag: string) {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot get application: database not available");
+    return undefined;
+  }
+
+  try {
+    const result = await db.select().from(applications).where(eq(applications.gamertag, gamertag)).limit(1);
+    return result.length > 0 ? result[0] : undefined;
+  } catch (error) {
+    console.error("[Database] Failed to get application:", error);
+    throw error;
+  }
+}
