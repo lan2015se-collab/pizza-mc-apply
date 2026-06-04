@@ -100,12 +100,12 @@
   - 需要從 OpenXBL 官方獲取新的有效 API 密鑰或檢查 IP 限制設置
 
 ## Xbox Live API 遷移 - 解決 Render IP 限制問題
-- [ ] 安裝 @xboxreplay/xboxlive-auth npm 包
-- [ ] 實現新的 Xbox Live 認證服務
-- [ ] 更新 verifyGamertag 端點使用新服務
-- [ ] 本地測試新的 Xbox Live 認證
-- [ ] 推送代碼到 GitHub
-- [ ] 驗證 Render 部署上是否正常工作
+- [x] 安裝 @xboxreplay/xboxlive-auth npm 包
+- [x] 實現新的 Xbox Live 認證服務
+- [x] 更新 verifyGamertag 端點使用新服務
+- [x] 本地測試新的 Xbox Live 認證
+- [x] 推送代碼到 GitHub
+- [x] 驗證 Render 部署上是否正常工作
 
 ## Xbox Live OAuth2 認證實現
 - [x] 安裝 @xboxreplay/xboxlive-auth npm 包
@@ -116,4 +116,4 @@
 - [x] 推送代碼到 GitHub
 - [x] 更新前端登錄頁面集成 OAuth2 流程 - 已更新為 Microsoft 帳戶登錄
 - [x] 本地測試 OAuth2 認證 - 本地頁面正常顯示
-- [ ] 驗證 Render 部署上的 OAuth2 功能
+- [x] 驗證 Render 部署上的 OAuth2 功能 - Render 部署已更新，頁面正常顯示 Microsoft 帳戶登錄表單
