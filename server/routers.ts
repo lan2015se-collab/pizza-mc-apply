@@ -70,9 +70,20 @@ export const appRouter = router({
           };
         } catch (error) {
           console.error("Xbox verification error:", error);
+          const errorMessage = error instanceof Error ? error.message : "Unknown error";
+          
+          // Provide user-friendly error messages for API failures
+          if (errorMessage.includes("Forbidden") || errorMessage.includes("403")) {
+            return {
+              success: false,
+              error: "Unable to verify Gamertag at this moment. Please try again later or contact support.",
+              details: "Xbox Live API service temporarily unavailable",
+            };
+          }
+          
           return {
             success: false,
-            error: error instanceof Error ? error.message : "Unknown error",
+            error: errorMessage,
           };
         }
       }),
@@ -94,9 +105,20 @@ export const appRouter = router({
           };
         } catch (error) {
           console.error("Xbox verification error:", error);
+          const errorMessage = error instanceof Error ? error.message : "Unknown error";
+          
+          // Provide user-friendly error messages for API failures
+          if (errorMessage.includes("Forbidden") || errorMessage.includes("403")) {
+            return {
+              success: false,
+              error: "Unable to verify Gamertag at this moment. Please try again later or contact support.",
+              details: "Xbox Live API service temporarily unavailable",
+            };
+          }
+          
           return {
             success: false,
-            error: error instanceof Error ? error.message : "Unknown error",
+            error: errorMessage,
           };
         }
       }),

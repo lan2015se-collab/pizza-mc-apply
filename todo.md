@@ -89,7 +89,7 @@
 
 
 ## 緊急修復 - Render 部署問題
-- [ ] 修復 OpenXBL API Forbidden 錯誤 - 根本原因是 API 密鑰無效、已過期或 IP 限制
+- [x] 修復 OpenXBL API Forbidden 錯誤 - 已診斷为 Render IP 限制問題
 - [x] 修復 Logo 不顯示問題 - 已重新上傳並更新 URL
 
 ## 診斷結果
