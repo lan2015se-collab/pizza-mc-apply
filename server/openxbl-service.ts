@@ -25,24 +25,42 @@ export async function verifyXboxGamertag(
 
   try {
     const encodedGamertag = encodeURIComponent(gamertag);
-    const response = await fetch(
-      `https://xbl.io/api/v2/search/${encodedGamertag}`,
-      {
-        headers: {
-          "X-Authorization": ENV.openxblApiKey,
-          "Accept": "application/json",
-        },
-      }
-    );
+    const url = `https://xbl.io/api/v2/search/${encodedGamertag}`;
+    
+    console.log(`[OpenXBL] Attempting to verify gamertag: ${gamertag}`);
+    console.log(`[OpenXBL] API URL: ${url}`);
+    console.log(`[OpenXBL] API Key present: ${!!ENV.openxblApiKey}`);
+    
+    const response = await fetch(url, {
+      headers: {
+        "X-Authorization": ENV.openxblApiKey,
+        "Accept": "application/json",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+      },
+    });
+
+    console.log(`[OpenXBL] Response status: ${response.status}`);
+    // Log response headers safely
+    if (response.headers) {
+      const headersObj: Record<string, string> = {};
+      response.headers.forEach((value, key) => {
+        headersObj[key] = value;
+      });
+      console.log(`[OpenXBL] Response headers:`, headersObj);
+    }
 
     if (!response.ok) {
+      const errorBody = await response.text();
+      console.error(`[OpenXBL] Error response body: ${errorBody}`);
+      
       if (response.status === 404) {
         return null; // Gamertag not found
       }
-      throw new Error(`OpenXBL API error: ${response.statusText}`);
+      throw new Error(`OpenXBL API error: ${response.statusText} (${response.status})`);
     }
 
     const data = await response.json();
+    console.log(`[OpenXBL] Response data:`, data);
 
     // OpenXBL 搜尋端點返回玩家陣列，取第一個結果
     if (Array.isArray(data) && data.length > 0) {

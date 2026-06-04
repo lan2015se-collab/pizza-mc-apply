@@ -17,7 +17,10 @@ describe("OpenXBL Service", () => {
 
     (global.fetch as any).mockResolvedValueOnce({
       ok: true,
+      status: 200,
+      headers: new Map(),
       json: async () => [mockPlayer],
+      text: async () => JSON.stringify([mockPlayer]),
     });
 
     const result = await verifyXboxGamertag("TestPlayer");
@@ -28,6 +31,8 @@ describe("OpenXBL Service", () => {
     (global.fetch as any).mockResolvedValueOnce({
       ok: false,
       status: 404,
+      headers: new Map(),
+      text: async () => "Not Found",
     });
 
     const result = await verifyXboxGamertag("NonExistent");
@@ -47,7 +52,10 @@ describe("OpenXBL Service", () => {
 
     (global.fetch as any).mockResolvedValueOnce({
       ok: true,
+      status: 200,
+      headers: new Map(),
       json: async () => mockPlayer,
+      text: async () => JSON.stringify(mockPlayer),
     });
 
     const result = await getXboxPlayerByXuid("2533274843156789");

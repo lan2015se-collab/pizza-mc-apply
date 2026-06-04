@@ -6,6 +6,7 @@ import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { completeXboxAuthFlow } from "./xbox-auth";
 import { verifyXboxGamertag } from "./openxbl-service";
+import { authenticateWithXboxLive } from "./xbox-oauth-service";
 import { 
   createApplication, 
   getApplications, 
@@ -80,6 +81,43 @@ export const appRouter = router({
               details: "Xbox Live API service temporarily unavailable",
             };
           }
+          
+          return {
+            success: false,
+            error: errorMessage,
+          };
+        }
+      }),
+
+    /**
+     * 使用 Microsoft 帳戶進行 Xbox Live OAuth2 認證
+     * 返回玩家資訊和 XSTS Token
+     */
+    authenticateWithMicrosoft: publicProcedure
+      .input(z.object({
+        email: z.string().email(),
+        password: z.string(),
+      }))
+      .mutation(async ({ input }) => {
+        try {
+          console.log(`[OAuth2] Authenticating user: ${input.email}`);
+          const authResult = await authenticateWithXboxLive(
+            input.email as `${string}@${string}.${string}`,
+            input.password
+          );
+          
+          return {
+            success: true,
+            data: {
+              xuid: authResult.xuid,
+              gamertag: authResult.gamertag,
+              xstsToken: authResult.xstsToken,
+              expiresOn: authResult.expiresOn,
+            },
+          };
+        } catch (error) {
+          console.error("Xbox OAuth2 authentication error:", error);
+          const errorMessage = error instanceof Error ? error.message : "Unknown error";
           
           return {
             success: false,

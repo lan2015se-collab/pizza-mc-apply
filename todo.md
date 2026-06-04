@@ -98,3 +98,21 @@
   - 原因分析: 可能是 API 密鑰無效、已過期或 OpenXBL API 的 IP 限制
   - 已經修正 Render 上的 OPENXBL_API_KEY 格式（移除重複部分）但仍然返回 Forbidden
   - 需要從 OpenXBL 官方獲取新的有效 API 密鑰或檢查 IP 限制設置
+
+## Xbox Live API 遷移 - 解決 Render IP 限制問題
+- [ ] 安裝 @xboxreplay/xboxlive-auth npm 包
+- [ ] 實現新的 Xbox Live 認證服務
+- [ ] 更新 verifyGamertag 端點使用新服務
+- [ ] 本地測試新的 Xbox Live 認證
+- [ ] 推送代碼到 GitHub
+- [ ] 驗證 Render 部署上是否正常工作
+
+## Xbox Live OAuth2 認證實現
+- [ ] 實現 Xbox Live OAuth2 後端服務（使用 @xboxreplay/xboxlive-auth）
+- [ ] 創建 OAuth2 授權端點
+- [ ] 創建 OAuth2 回調端點
+- [ ] 實現 Token 存儲和管理
+- [ ] 更新前端登錄頁面集成 OAuth2 流程
+- [ ] 本地測試 OAuth2 認證
+- [ ] 推送代碼到 GitHub
+- [ ] 驗證 Render 部署上的 OAuth2 功能
