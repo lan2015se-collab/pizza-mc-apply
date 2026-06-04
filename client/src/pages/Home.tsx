@@ -47,7 +47,7 @@ export default function Home() {
         {/* Logo */}
         <div className="flex justify-center">
           <img
-            src="/manus-storage/1000018851_f9a3f613.png"
+            src="/manus-storage/1000018851_702f8b22.png"
             alt="Pizza MC Logo"
             className="h-32 w-32 object-contain"
           />
@@ -98,7 +98,7 @@ export default function Home() {
           {verifyGamertag.isPending ? (
             <>
               <Spinner className="h-5 w-5" />
-              正在驗證...
+              Loading...
             </>
           ) : (
             "使用 Xbox 帳號登入"
