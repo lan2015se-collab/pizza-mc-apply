@@ -8,6 +8,7 @@ export const ENV = {
   forgeApiUrl: process.env.BUILT_IN_FORGE_API_URL ?? "",
   forgeApiKey: process.env.BUILT_IN_FORGE_API_KEY ?? "",
   sendgridApiKey: process.env.SENDGRID_API_KEY ?? "",
+  openxblApiKey: process.env.OPENXBL_API_KEY ?? "",
 };
 
 export type EnvType = typeof ENV;

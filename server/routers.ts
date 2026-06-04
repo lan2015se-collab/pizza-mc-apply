@@ -5,6 +5,7 @@ import { publicProcedure, router } from "./_core/trpc";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { completeXboxAuthFlow } from "./xbox-auth";
+import { verifyXboxGamertag } from "./openxbl-service";
 import { 
   createApplication, 
   getApplications, 
@@ -46,6 +47,36 @@ export const appRouter = router({
 
   // Xbox 認證與申請相關路由
   application: router({
+    /**
+     * 使用 OpenXBL API 驗證 Xbox Gamertag
+     * 返回玩家資訊
+     */
+    verifyGamertag: publicProcedure
+      .input(z.object({
+        gamertag: z.string().min(1),
+      }))
+      .mutation(async ({ input }) => {
+        try {
+          const player = await verifyXboxGamertag(input.gamertag);
+          if (!player) {
+            return {
+              success: false,
+              error: "Gamertag not found",
+            };
+          }
+          return {
+            success: true,
+            data: player,
+          };
+        } catch (error) {
+          console.error("Xbox verification error:", error);
+          return {
+            success: false,
+            error: error instanceof Error ? error.message : "Unknown error",
+          };
+        }
+      }),
+
     /**
      * 使用 Microsoft access token 完成 Xbox 認證
      * 返回玩家資訊

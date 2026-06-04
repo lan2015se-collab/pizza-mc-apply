@@ -78,3 +78,11 @@
 - [x] 實現 Gamertag 查詢 API
 - [x] 顯示申請狀態（待審核/已批准/已拒絕）
 - [x] 若已批准，顯示伺服器資訊
+
+
+## OpenXBL Xbox 認證整合
+- [x] 整合 OpenXBL API 用於 Xbox Gamertag 驗證
+- [x] 建立 verifyGamertag tRPC 端點
+- [x] 添加 OPENXBL_API_KEY 環境變數
+- [x] 建立 OpenXBL 服務測試（3 個測試通過）
+- [x] 更新 routers.ts 支援 OpenXBL 認證
