@@ -164,3 +164,15 @@
 - [ ] 本地測試修復
 - [ ] 推送代碼到 GitHub
 - [ ] 驗證 Render 部署
+
+
+## Render 部署 React DOM 錯誤修復完成
+- [x] 診斷 React DOM removeChild 錯誤原因 - 計時器未清理
+- [x] 檢查組件卸載邏輯 - Dialog、useComposition、Input、Textarea
+- [x] 修復 Dialog 組件中的計時器 - 添加 useEffect 清理
+- [x] 修復 useComposition 鉤子中的計時器 - 添加 useEffect 清理
+- [x] 修復 Input 組件中的計時器 - 添加 compositionTimeoutRef 和清理
+- [x] 修復 Textarea 組件中的計時器 - 添加 compositionTimeoutRef 和清理
+- [x] 本地測試修復 - 所有 35 個測試通過
+- [x] 推送代碼到 GitHub - 已提交 2 個 commits
+- [ ] 驗證 Render 部署 - 待 Render 自動部署完成
