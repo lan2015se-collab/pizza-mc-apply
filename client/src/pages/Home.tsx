@@ -5,12 +5,14 @@ import { Input } from "@/components/ui/input";
 import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { Spinner } from "@/components/ui/spinner";
+import { AdminPasswordDialog } from "@/components/AdminPasswordDialog";
 
 export default function Home() {
   const [, setLocation] = useLocation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [adminDialogOpen, setAdminDialogOpen] = useState(false);
   const authenticateWithMicrosoft = trpc.application.authenticateWithMicrosoft.useMutation();
 
   const handleMicrosoftLogin = async () => {
@@ -128,14 +130,39 @@ export default function Home() {
           )}
         </Button>
 
-        {/* 查看玩家名單連結 */}
+        {/* 查看玩家名單和查詢狀態連結 */}
+        <div className="flex gap-3">
+          <Button
+            onClick={() => setLocation("/players")}
+            variant="outline"
+            className="flex-1 border border-gray-300 text-black hover:bg-gray-100"
+          >
+            查看已批准玩家名單
+          </Button>
+          <Button
+            onClick={() => setLocation("/query")}
+            variant="outline"
+            className="flex-1 border border-gray-300 text-black hover:bg-gray-100"
+          >
+            查詢申請狀態
+          </Button>
+        </div>
+
+        {/* 管理員區域按鈕 */}
         <Button
-          onClick={() => setLocation("/players")}
+          onClick={() => setAdminDialogOpen(true)}
           variant="outline"
-          className="w-full border border-gray-300 text-black hover:bg-gray-100"
+          className="w-full border border-gray-300 text-black hover:bg-gray-100 text-sm"
         >
-          查看已批准玩家名單
+          管理員區域
         </Button>
+
+        {/* 管理員密碼驗證對話框 */}
+        <AdminPasswordDialog
+          open={adminDialogOpen}
+          onOpenChange={setAdminDialogOpen}
+          onSuccess={() => setLocation("/admin/dashboard")}
+        />
       </div>
     </div>
   );

@@ -12,6 +12,7 @@ import PlayerList from "./pages/PlayerList";
 import AdminPanel from "./pages/AdminPanel";
 import ApplicationStatus from "./pages/ApplicationStatus";
 import AdminDashboard from "./pages/AdminDashboard";
+import StatusQuery from "./pages/StatusQuery";
 
 function Router() {
   return (
@@ -23,6 +24,7 @@ function Router() {
       <Route path={"/players"} component={PlayerList} />
       <Route path={"/admin"} component={AdminPanel} />
       <Route path={"/status"} component={ApplicationStatus} />
+      <Route path={"/query"} component={StatusQuery} />
       <Route path={"/admin/dashboard"} component={AdminDashboard} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
