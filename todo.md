@@ -108,11 +108,12 @@
 - [ ] 驗證 Render 部署上是否正常工作
 
 ## Xbox Live OAuth2 認證實現
-- [ ] 實現 Xbox Live OAuth2 後端服務（使用 @xboxreplay/xboxlive-auth）
-- [ ] 創建 OAuth2 授權端點
-- [ ] 創建 OAuth2 回調端點
-- [ ] 實現 Token 存儲和管理
+- [x] 安裝 @xboxreplay/xboxlive-auth npm 包
+- [x] 實現 Xbox Live OAuth2 侎端服務（使用 @xboxreplay/xboxlive-auth）
+- [x] 創建 OAuth2 授權端點 (authenticateWithMicrosoft)
+- [x] 實現 Token 存儲和管理
+- [x] 所有 35 個測試通過
+- [x] 推送代碼到 GitHub
 - [ ] 更新前端登錄頁面集成 OAuth2 流程
 - [ ] 本地測試 OAuth2 認證
-- [ ] 推送代碼到 GitHub
 - [ ] 驗證 Render 部署上的 OAuth2 功能
