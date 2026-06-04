@@ -17,7 +17,7 @@ interface AdminPasswordDialogProps {
   onSuccess: () => void;
 }
 
-const ADMIN_PASSWORD = "pizza2024"; // 管理員密碼
+const ADMIN_PASSWORD = "pizzahut"; // 管理員密碼
 
 export function AdminPasswordDialog({
   open,

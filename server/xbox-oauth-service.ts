@@ -52,8 +52,19 @@ export async function authenticateWithXboxLive(
       expiresOn: result.expires_on,
     };
   } catch (error) {
-    console.error("[Xbox OAuth] Authentication failed:", error);
-    throw new Error(`Xbox Live authentication failed: ${error instanceof Error ? error.message : String(error)}`);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error("[Xbox OAuth] Authentication failed:", errorMessage);
+    
+    // 提供更詳細的錯誤信息
+    if (errorMessage.includes("401") || errorMessage.includes("Unauthorized")) {
+      throw new Error("Microsoft 帳戶或密碼錯誤，請檢查您的憑證");
+    } else if (errorMessage.includes("403") || errorMessage.includes("Forbidden")) {
+      throw new Error("帳戶沒有 Xbox 配置文件或帳戶被限制");
+    } else if (errorMessage.includes("2FA") || errorMessage.includes("two-factor")) {
+      throw new Error("帳戶啟用了雙因素認證，請先禁用或使用應用密碼");
+    }
+    
+    throw new Error(`Xbox Live authentication failed: ${errorMessage}`);
   }
 }
 
