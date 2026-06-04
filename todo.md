@@ -143,9 +143,9 @@
 - [x] 本地測試管理員功能
 
 ## 待實現 - 郵件通知系統
-- [ ] 配置 SendGrid API 密鑰
-- [ ] 實現郵件發送服務
-- [ ] 批准時發送通知郵件
-- [ ] 拒絕時發送通知郵件
-- [ ] 本地測試郵件發送
+- [x] 配置 SendGrid API 密鑰 - 已配置
+- [x] 實現郵件發送服務 (sendgrid-service.ts)
+- [x] 批准時發送通知郵件 (sendApprovalNotification)
+- [x] 拒絕時發送通知郵件 (sendRejectionNotification)
+- [x] 本地測試郵件發送 - 所有 35 個測試通過
 - [ ] Render 部署測試
