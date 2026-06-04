@@ -150,3 +150,8 @@
 - [x] 拒絕時發送通知郵件 (sendRejectionNotification)
 - [x] 本地測試郵件發送 - 所有 35 個測試通過
 - [ ] Render 部署測試
+
+
+## 緊急修復 - 管理員密碼和 Xbox Live 認證
+- [x] 修正管理員密碼為 pizzahut - 已完成，本地測試成功
+- [x] 改進 Xbox Live 認證錯誤處理 - 添加詳細的錯誤信息提示
