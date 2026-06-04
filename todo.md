@@ -119,13 +119,13 @@
 - [x] 驗證 Render 部署上的 OAuth2 功能 - Render 部署已更新，頁面正常顯示 Microsoft 帳戶登錄表單
 
 
-## 新功能實現 - 完整 OAuth2 授權流程
-- [ ] 實現 Microsoft OAuth2 授權端點 (/api/oauth/authorize) - 需要 Client Secret，放棄
-- [ ] 實現 OAuth2 callback 端點處理授權碼 (/api/oauth/callback) - 需要 Client Secret，放棄
-- [ ] 實現 Token 交換和存儲邏輯 - 需要 Client Secret，放棄
-- [ ] 更新前端使用 OAuth2 授權流程 - 需要 Client Secret，放棄
-- [ ] 本地測試 OAuth2 完整流程 - 需要 Client Secret，放棄
-- [ ] Render 部署測試 - 需要 Client Secret，放棄
+## 新功能實現 - Microsoft 帳戶登錄方案 (OAuth2 完整流程已放棄，改用郵箱密碼方案)
+- [x] 安裝 @xboxreplay/xboxlive-auth npm 包 - 已完成
+- [x] 實現 Xbox Live 認證服務 - 已完成
+- [x] 實現 authenticateWithMicrosoft tRPC 端點 - 已完成
+- [x] 更新前端使用 Microsoft 帳戶登錄 - 已更新為郵箱密碼登錄表單
+- [x] 本地測試 Microsoft 帳戶登錄 - 已完成本地測試
+- [ ] 驗證 Render 部署上的 Microsoft 帳戶登錄 - 待 Render 部署完成
 - [x] 移除 Logo - 已完成
 
 ## 新功能實現 - 申請狀態查詢
@@ -149,9 +149,18 @@
 - [x] 批准時發送通知郵件 (sendApprovalNotification)
 - [x] 拒絕時發送通知郵件 (sendRejectionNotification)
 - [x] 本地測試郵件發送 - 所有 35 個測試通過
-- [ ] Render 部署測試
+- [ ] 驗證 Render 部署上的 SendGrid 郵件通知 - 待 Render 部署完成後進行驗證
 
 
 ## 緊急修復 - 管理員密碼和 Xbox Live 認證
 - [x] 修正管理員密碼為 pizzahut - 已完成，本地測試成功
 - [x] 改進 Xbox Live 認證錯誤處理 - 添加詳細的錯誤信息提示
+
+
+## 緊急修復 - Render 部署 React DOM 錯誤
+- [ ] 診斷 React DOM removeChild 錯誤原因
+- [ ] 檢查組件卸載邏輯
+- [ ] 修復 Dialog/Modal 組件卸載問題
+- [ ] 本地測試修復
+- [ ] 推送代碼到 GitHub
+- [ ] 驗證 Render 部署
