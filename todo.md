@@ -102,3 +102,8 @@
 - [x] 更新 Loading 文字顯示 - 改為英文 "Loading..."
 - [x] 所有 35 個測試通過
 - [x] 開發伺服務器正常運行
+
+
+## 緊急修復 - Render 部署問題
+- [ ] 修復 OpenXBL API Forbidden 錯誤
+- [ ] 修復 Logo 不顯示問題
