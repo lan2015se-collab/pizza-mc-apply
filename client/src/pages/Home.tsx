@@ -1,34 +1,45 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { useLocation } from "wouter";
+import { trpc } from "@/lib/trpc";
+import { Spinner } from "@/components/ui/spinner";
 
 export default function Home() {
   const [, setLocation] = useLocation();
-  const [isLoading, setIsLoading] = useState(false);
+  const [gamertag, setGamertag] = useState("");
+  const [error, setError] = useState("");
+  const verifyGamertag = trpc.application.verifyGamertag.useMutation();
 
-  const handleXboxLogin = () => {
-    setIsLoading(true);
-    // 構建 Microsoft OAuth 授權 URL
-    const clientId = import.meta.env.VITE_APP_ID;
-    const redirectUri = `${window.location.origin}/auth/callback`;
-    const scopes = ["XboxLive.signin"];
-    
-    const authUrl = new URL("https://login.microsoftonline.com/consumers/oauth2/v2.0/authorize");
-    authUrl.searchParams.append("client_id", clientId);
-    authUrl.searchParams.append("redirect_uri", redirectUri);
-    authUrl.searchParams.append("response_type", "code");
-    authUrl.searchParams.append("scope", scopes.join(" "));
-    authUrl.searchParams.append("response_mode", "query");
-    
-    window.location.href = authUrl.toString();
+  const handleVerifyGamertag = async () => {
+    if (!gamertag.trim()) {
+      setError("請輸入 Xbox Gamertag");
+      return;
+    }
+
+    setError("");
+    try {
+      const result = await verifyGamertag.mutateAsync({ gamertag: gamertag.trim() });
+      
+      if (result.success && result.data) {
+        // 驗證成功，存儲玩家資訊並進入申請表單
+        sessionStorage.setItem("xboxPlayer", JSON.stringify(result.data));
+        setLocation("/apply");
+      } else {
+        setError(result.error || "Gamertag 驗證失敗，請檢查輸入");
+      }
+    } catch (err) {
+      setError("驗證過程中發生錯誤，請稍後重試");
+      console.error("Verification error:", err);
+    }
   };
 
   return (
     <div className="min-h-screen bg-white flex flex-col items-center justify-center px-4">
       <style>{`
         body {
-          font-family: 'Noto Serif TC', 'Microsoft JhengHei', 'SimSun', serif;
+          font-family: '新細明體', 'Microsoft JhengHei', 'SimSun', serif;
         }
       `}</style>
       
@@ -51,17 +62,47 @@ export default function Home() {
         {/* 說明文字 */}
         <Card className="bg-gray-50 border border-gray-200 p-6">
           <p className="text-gray-700 text-base leading-relaxed">
-            歡迎申請加入 Pizza MC 伺服器。請使用您的 Xbox 帳號登入以開始申請程序。
+            歡迎申請加入 Pizza MC 伺服器。請輸入您的 Xbox Gamertag 以開始申請程序。
           </p>
         </Card>
 
-        {/* 登入按鈕 */}
+        {/* Gamertag 輸入框 */}
+        <div className="space-y-2">
+          <Input
+            type="text"
+            placeholder="輸入您的 Xbox Gamertag"
+            value={gamertag}
+            onChange={(e) => {
+              setGamertag(e.target.value);
+              setError("");
+            }}
+            onKeyPress={(e) => {
+              if (e.key === "Enter") {
+                handleVerifyGamertag();
+              }
+            }}
+            className="w-full px-4 py-3 border border-gray-300 rounded-md text-black placeholder-gray-400"
+            disabled={verifyGamertag.isPending}
+          />
+          {error && (
+            <p className="text-red-600 text-sm">{error}</p>
+          )}
+        </div>
+
+        {/* 驗證按鈕 */}
         <Button
-          onClick={handleXboxLogin}
-          disabled={isLoading}
-          className="w-full bg-black text-white hover:bg-gray-800 py-6 text-lg font-semibold"
+          onClick={handleVerifyGamertag}
+          disabled={verifyGamertag.isPending || !gamertag.trim()}
+          className="w-full bg-black text-white hover:bg-gray-800 py-6 text-lg font-semibold flex items-center justify-center gap-2"
         >
-          {isLoading ? "正在重導向..." : "使用 Xbox 帳號登入"}
+          {verifyGamertag.isPending ? (
+            <>
+              <Spinner className="h-5 w-5" />
+              正在驗證...
+            </>
+          ) : (
+            "使用 Xbox 帳號登入"
+          )}
         </Button>
 
         {/* 查看玩家名單連結 */}

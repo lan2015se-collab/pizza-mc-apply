@@ -1,19 +1,12 @@
-import { useState } from "react";
+import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { useLocation } from "wouter";
-import { toast } from "sonner";
 
-interface ServerInfoProps {
-  gamertag: string;
-  xboxAccountId: string;
-}
-
-export default function ServerInfo({ gamertag, xboxAccountId }: ServerInfoProps) {
+export default function ServerInfo() {
   const [, setLocation] = useLocation();
-  const [isLoading, setIsLoading] = useState(false);
 
   const handleReturnHome = () => {
+    sessionStorage.removeItem("xboxPlayer");
     setLocation("/");
   };
 
@@ -21,7 +14,7 @@ export default function ServerInfo({ gamertag, xboxAccountId }: ServerInfoProps)
     <div className="min-h-screen bg-white flex flex-col items-center justify-center px-4 py-8">
       <style>{`
         body {
-          font-family: 'Noto Serif TC', 'Microsoft JhengHei', 'SimSun', serif;
+          font-family: '新細明體', 'Microsoft JhengHei', 'SimSun', serif;
         }
       `}</style>
 

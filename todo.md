@@ -86,3 +86,11 @@
 - [x] 添加 OPENXBL_API_KEY 環境變數
 - [x] 建立 OpenXBL 服務測試（3 個測試通過）
 - [x] 更新 routers.ts 支援 OpenXBL 認證
+
+## OpenXBL 登入流程完成
+- [x] 更新首頁 - 用戶輸入 Gamertag 驗證
+- [x] 更新申請表單 - 從 sessionStorage 讀取玩家資訊
+- [x] 更新伺服器資訊頁面 - 移除 props 使用 sessionStorage
+- [x] 更新路由 - 使用新的 /apply 路徑
+- [x] 所有 35 個測試通過
+- [x] 開發伺服器正常運行
