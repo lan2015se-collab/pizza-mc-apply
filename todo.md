@@ -106,4 +106,4 @@
 
 ## 緊急修復 - Render 部署問題
 - [ ] 修復 OpenXBL API Forbidden 錯誤
-- [ ] 修復 Logo 不顯示問題
+- [x] 修復 Logo 不顯示問題 - 已重新上傳並更新 URL

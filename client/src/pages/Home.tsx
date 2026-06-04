@@ -47,7 +47,7 @@ export default function Home() {
         {/* Logo */}
         <div className="flex justify-center">
           <img
-            src="https://manus-storage.s3.amazonaws.com/1000018851_702f8b22.png"
+            src="/manus-storage/1000018851_e79ae118.png"
             alt="Pizza MC Logo"
             className="h-32 w-32 object-contain"
           />
