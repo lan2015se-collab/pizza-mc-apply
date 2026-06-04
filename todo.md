@@ -89,9 +89,12 @@
 
 
 ## 緊急修復 - Render 部署問題
-- [ ] 修復 OpenXBL API Forbidden 錯誤 - 需要在 Render 管理面檢查並更新 OPENXBL_API_KEY 環境變數
+- [ ] 修復 OpenXBL API Forbidden 錯誤 - 根本原因是 API 密鑰無效、已過期或 IP 限制
 - [x] 修復 Logo 不顯示問題 - 已重新上傳並更新 URL
 
 ## 診斷結果
 - 本地開發環境: OpenXBL API 正常工作，返回 "Gamertag not found"
-- Render 部署環境: OpenXBL API 返回 "Forbidden" 錯誤，需要棂查 OPENXBL_API_KEY 環境變數是否正確配置
+- Render 部署環境: OpenXBL API 返回 "Forbidden" 錯誤
+  - 原因分析: 可能是 API 密鑰無效、已過期或 OpenXBL API 的 IP 限制
+  - 已經修正 Render 上的 OPENXBL_API_KEY 格式（移除重複部分）但仍然返回 Forbidden
+  - 需要從 OpenXBL 官方獲取新的有效 API 密鑰或檢查 IP 限制設置
