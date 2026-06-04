@@ -8,30 +8,38 @@ import { Spinner } from "@/components/ui/spinner";
 
 export default function Home() {
   const [, setLocation] = useLocation();
-  const [gamertag, setGamertag] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const verifyGamertag = trpc.application.verifyGamertag.useMutation();
+  const authenticateWithMicrosoft = trpc.application.authenticateWithMicrosoft.useMutation();
 
-  const handleVerifyGamertag = async () => {
-    if (!gamertag.trim()) {
-      setError("請輸入 Xbox Gamertag");
+  const handleMicrosoftLogin = async () => {
+    if (!email.trim()) {
+      setError("請輸入 Microsoft 帳戶郵箱");
+      return;
+    }
+    if (!password.trim()) {
+      setError("請輸入密碼");
       return;
     }
 
     setError("");
     try {
-      const result = await verifyGamertag.mutateAsync({ gamertag: gamertag.trim() });
+      const result = await authenticateWithMicrosoft.mutateAsync({ 
+        email: email.trim(),
+        password: password.trim()
+      });
       
       if (result.success && result.data) {
-        // 驗證成功，存儲玩家資訊並進入申請表單
+        // 認證成功，存儲玩家資訊並進入申請表單
         sessionStorage.setItem("xboxPlayer", JSON.stringify(result.data));
         setLocation("/apply");
       } else {
-        setError(result.error || "Gamertag 驗證失敗，請檢查輸入");
+        setError(result.error || "Microsoft 帳戶登錄失敗，請檢查郵箱和密碼");
       }
     } catch (err) {
-      setError("驗證過程中發生錯誤，請稍後重試");
-      console.error("Verification error:", err);
+      setError("登錄過程中發生錯誤，請稍後重試");
+      console.error("Authentication error:", err);
     }
   };
 
@@ -62,46 +70,61 @@ export default function Home() {
         {/* 說明文字 */}
         <Card className="bg-gray-50 border border-gray-200 p-6">
           <p className="text-gray-700 text-base leading-relaxed">
-            歡迎申請加入 Pizza MC 伺服器。請輸入您的 Xbox Gamertag 以開始申請程序。
+            歡迎申請加入 Pizza MC 伺服器。請使用您的 Microsoft 帳戶登錄以開始申請程序。
           </p>
         </Card>
 
-        {/* Gamertag 輸入框 */}
+        {/* 郵箱輸入框 */}
         <div className="space-y-2">
           <Input
-            type="text"
-            placeholder="輸入您的 Xbox Gamertag"
-            value={gamertag}
+            type="email"
+            placeholder="Microsoft 帳戶郵箱"
+            value={email}
             onChange={(e) => {
-              setGamertag(e.target.value);
+              setEmail(e.target.value);
+              setError("");
+            }}
+            className="w-full px-4 py-3 border border-gray-300 rounded-md text-black placeholder-gray-400"
+            disabled={authenticateWithMicrosoft.isPending}
+          />
+        </div>
+
+        {/* 密碼輸入框 */}
+        <div className="space-y-2">
+          <Input
+            type="password"
+            placeholder="Microsoft 帳戶密碼"
+            value={password}
+            onChange={(e) => {
+              setPassword(e.target.value);
               setError("");
             }}
             onKeyPress={(e) => {
               if (e.key === "Enter") {
-                handleVerifyGamertag();
+                handleMicrosoftLogin();
               }
             }}
             className="w-full px-4 py-3 border border-gray-300 rounded-md text-black placeholder-gray-400"
-            disabled={verifyGamertag.isPending}
+            disabled={authenticateWithMicrosoft.isPending}
           />
           {error && (
             <p className="text-red-600 text-sm">{error}</p>
           )}
         </div>
 
-        {/* 驗證按鈕 */}
+        {/* 登錄按鈕 */}
         <Button
-          onClick={handleVerifyGamertag}
-          disabled={verifyGamertag.isPending || !gamertag.trim()}
+          onClick={handleMicrosoftLogin}
+          disabled={authenticateWithMicrosoft.isPending || !email.trim() || !password.trim()}
           className="w-full bg-black text-white hover:bg-gray-800 py-6 text-lg font-semibold flex items-center justify-center gap-2"
         >
-          {verifyGamertag.isPending ? (
+          {authenticateWithMicrosoft.isPending ? (
             <>
               <Spinner className="h-5 w-5" />
-              Loading...
+              登錄中...
             </>
           ) : (
-            "使用 Xbox 帳號登入"
+            "使用 Microsoft 帳號登入"
           )}
         </Button>
 
