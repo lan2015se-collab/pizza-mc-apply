@@ -54,15 +54,6 @@ export default function Home() {
       `}</style>
       
       <div className="max-w-md w-full space-y-8 text-center">
-        {/* Logo */}
-        <div className="flex justify-center">
-          <img
-            src="/manus-storage/1000018851_e79ae118.png"
-            alt="Pizza MC Logo"
-            className="h-32 w-32 object-contain"
-          />
-        </div>
-
         {/* 標題 */}
         <div className="space-y-2">
           <h1 className="text-4xl font-bold text-black">Pizza MC</h1>

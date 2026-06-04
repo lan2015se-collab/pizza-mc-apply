@@ -120,12 +120,13 @@
 
 
 ## 新功能實現 - 完整 OAuth2 授權流程
-- [ ] 實現 Microsoft OAuth2 授權端點
-- [ ] 實現 OAuth2 callback 端點處理授權碼
+- [ ] 實現 Microsoft OAuth2 授權端點 (/api/oauth/authorize)
+- [ ] 實現 OAuth2 callback 端點處理授權碼 (/api/oauth/callback)
 - [ ] 實現 Token 交換和存儲邏輯
 - [ ] 更新前端使用 OAuth2 授權流程
 - [ ] 本地測試 OAuth2 完整流程
 - [ ] Render 部署測試
+- [ ] 移除 Logo
 
 ## 新功能實現 - 申請狀態查詢
 - [x] 創建申請狀態查詢頁面 (StatusQuery.tsx)
