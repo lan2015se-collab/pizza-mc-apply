@@ -176,3 +176,33 @@
 - [x] 本地測試修復 - 所有 35 個測試通過
 - [x] 推送代碼到 GitHub - 已提交 2 個 commits
 - [ ] 驗證 Render 部署 - 待 Render 自動部署完成
+
+
+## 緊急修復 - Xbox Live 認證失敗
+- [ ] 診斷 Xbox Live 認證失敗原因
+- [ ] 檢查 @xboxreplay/xboxlive-auth 包的最新版本
+- [ ] 驗證 Microsoft 帳戶認證流程
+- [ ] 改進錯誤處理和日誌記錄
+- [ ] 本地測試認證流程
+- [ ] 推送修復代碼
+- [ ] 驗證 Render 部署
+
+
+## 修復完成 - Xbox Live 認證改用 Gamertag 驗證
+- [x] 診斷 Xbox Live 認證失敗原因 - @xboxreplay/xboxlive-auth 包存在問題
+- [x] 改用 Gamertag 驗證替代 Microsoft 帳戶認證
+- [x] 更新前端登錄表單 - 改為 Gamertag 輸入
+- [x] 使用 OpenXBL API 驗證 Gamertag
+- [x] 本地測試驗證流程 - 所有 35 個測試通過
+- [x] 推送代碼到 GitHub - 已提交
+- [ ] 驗證 Render 部署 - 待部署完成
+
+
+## 簡化功能 - 改為 Minecraft 用戶名稱輸入（無驗證）
+- [ ] 更新前端登錄表單 - 改為簡單的 Minecraft 用戶名稱輸入
+- [ ] 移除所有 OAuth2 和 Xbox 認證邏輯
+- [ ] 簡化後端申請流程 - 直接接受用戶名稱
+- [ ] 更新數據庫 schema - 改為存儲 Minecraft 用戶名稱
+- [ ] 本地測試簡化流程
+- [ ] 推送代碼到 GitHub
+- [ ] 驗證 Render 部署

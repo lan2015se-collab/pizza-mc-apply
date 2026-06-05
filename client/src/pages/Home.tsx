@@ -3,46 +3,34 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useLocation } from "wouter";
-import { trpc } from "@/lib/trpc";
-import { Spinner } from "@/components/ui/spinner";
 import { AdminPasswordDialog } from "@/components/AdminPasswordDialog";
 
 export default function Home() {
   const [, setLocation] = useLocation();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
   const [error, setError] = useState("");
   const [adminDialogOpen, setAdminDialogOpen] = useState(false);
-  const authenticateWithMicrosoft = trpc.application.authenticateWithMicrosoft.useMutation();
 
-  const handleMicrosoftLogin = async () => {
-    if (!email.trim()) {
-      setError("請輸入 Microsoft 帳戶郵箱");
+  const handleStartApplication = () => {
+    if (!username.trim()) {
+      setError("請輸入 Minecraft 用戶名稱");
       return;
     }
-    if (!password.trim()) {
-      setError("請輸入密碼");
+
+    if (username.trim().length < 3) {
+      setError("用戶名稱至少需要 3 個字符");
+      return;
+    }
+
+    if (username.trim().length > 16) {
+      setError("用戶名稱最多 16 個字符");
       return;
     }
 
     setError("");
-    try {
-      const result = await authenticateWithMicrosoft.mutateAsync({ 
-        email: email.trim(),
-        password: password.trim()
-      });
-      
-      if (result.success && result.data) {
-        // 認證成功，存儲玩家資訊並進入申請表單
-        sessionStorage.setItem("xboxPlayer", JSON.stringify(result.data));
-        setLocation("/apply");
-      } else {
-        setError(result.error || "Microsoft 帳戶登錄失敗，請檢查郵箱和密碼");
-      }
-    } catch (err) {
-      setError("登錄過程中發生錯誤，請稍後重試");
-      console.error("Authentication error:", err);
-    }
+    // 存儲用戶名稱並進入申請表單
+    sessionStorage.setItem("minecraftUsername", username.trim());
+    setLocation("/apply");
   };
 
   return (
@@ -63,62 +51,40 @@ export default function Home() {
         {/* 說明文字 */}
         <Card className="bg-gray-50 border border-gray-200 p-6">
           <p className="text-gray-700 text-base leading-relaxed">
-            歡迎申請加入 Pizza MC 伺服器。請使用您的 Microsoft 帳戶登錄以開始申請程序。
+            歡迎申請加入 Pizza MC 伺服器。請輸入您的 Minecraft 用戶名稱以開始申請程序。
           </p>
         </Card>
 
-        {/* 郵箱輸入框 */}
+        {/* 用戶名稱輸入框 */}
         <div className="space-y-2">
           <Input
-            type="email"
-            placeholder="Microsoft 帳戶郵箱"
-            value={email}
+            type="text"
+            placeholder="輸入 Minecraft 用戶名稱"
+            value={username}
             onChange={(e) => {
-              setEmail(e.target.value);
-              setError("");
-            }}
-            className="w-full px-4 py-3 border border-gray-300 rounded-md text-black placeholder-gray-400"
-            disabled={authenticateWithMicrosoft.isPending}
-          />
-        </div>
-
-        {/* 密碼輸入框 */}
-        <div className="space-y-2">
-          <Input
-            type="password"
-            placeholder="Microsoft 帳戶密碼"
-            value={password}
-            onChange={(e) => {
-              setPassword(e.target.value);
+              setUsername(e.target.value);
               setError("");
             }}
             onKeyPress={(e) => {
               if (e.key === "Enter") {
-                handleMicrosoftLogin();
+                handleStartApplication();
               }
             }}
             className="w-full px-4 py-3 border border-gray-300 rounded-md text-black placeholder-gray-400"
-            disabled={authenticateWithMicrosoft.isPending}
+            maxLength={16}
           />
           {error && (
             <p className="text-red-600 text-sm">{error}</p>
           )}
         </div>
 
-        {/* 登錄按鈕 */}
+        {/* 開始申請按鈕 */}
         <Button
-          onClick={handleMicrosoftLogin}
-          disabled={authenticateWithMicrosoft.isPending || !email.trim() || !password.trim()}
-          className="w-full bg-black text-white hover:bg-gray-800 py-6 text-lg font-semibold flex items-center justify-center gap-2"
+          onClick={handleStartApplication}
+          disabled={!username.trim()}
+          className="w-full bg-black text-white hover:bg-gray-800 py-6 text-lg font-semibold"
         >
-          {authenticateWithMicrosoft.isPending ? (
-            <>
-              <Spinner className="h-5 w-5" />
-              登錄中...
-            </>
-          ) : (
-            "使用 Microsoft 帳號登入"
-          )}
+          開始申請
         </Button>
 
         {/* 查看玩家名單和查詢狀態連結 */}

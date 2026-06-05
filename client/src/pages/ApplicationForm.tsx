@@ -7,22 +7,9 @@ import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 
-interface XboxPlayer {
-  xuid: string;
-  gamertag: string;
-  gamerscore: number;
-  accountTier: string;
-  profilePicture?: string;
-  realName?: string;
-  bio?: string;
-  location?: string;
-  tenure: number;
-  isVerified: boolean;
-}
-
 export default function ApplicationForm() {
   const [, setLocation] = useLocation();
-  const [player, setPlayer] = useState<XboxPlayer | null>(null);
+  const [username, setUsername] = useState("");
   const [reason, setReason] = useState("");
   const [notionChecked, setNotionChecked] = useState(false);
   const [applicantEmail, setApplicantEmail] = useState("");
@@ -32,27 +19,20 @@ export default function ApplicationForm() {
   const submitMutation = trpc.application.submit.useMutation();
 
   useEffect(() => {
-    // 從 sessionStorage 讀取玩家資訊
-    const storedPlayer = sessionStorage.getItem("xboxPlayer");
-    if (storedPlayer) {
-      try {
-        const playerData = JSON.parse(storedPlayer);
-        setPlayer(playerData);
-      } catch (error) {
-        console.error("Failed to parse player data:", error);
-        toast.error("玩家資訊載入失敗，請重新登入");
-        setLocation("/");
-      }
+    // 從 sessionStorage 讀取用戶名稱
+    const storedUsername = sessionStorage.getItem("minecraftUsername");
+    if (storedUsername) {
+      setUsername(storedUsername);
     } else {
-      toast.error("未找到玩家資訊，請重新登入");
+      toast.error("未找到用戶名稱，請重新登入");
       setLocation("/");
     }
     setIsInitializing(false);
   }, [setLocation]);
 
   const handleSubmit = async () => {
-    if (!player) {
-      toast.error("玩家資訊丟失，請重新登入");
+    if (!username) {
+      toast.error("用戶名稱丟失，請重新登入");
       return;
     }
 
@@ -82,8 +62,8 @@ export default function ApplicationForm() {
     setIsLoading(true);
     try {
       const result = await submitMutation.mutateAsync({
-        gamertag: player.gamertag,
-        xboxAccountId: player.xuid,
+        gamertag: username,
+        xboxAccountId: "", // 不需要 Xbox 帳號
         reason: reason.trim(),
         applicantEmail: applicantEmail.trim(),
       });
@@ -91,7 +71,7 @@ export default function ApplicationForm() {
       if (result.success) {
         toast.success("申請已提交，請等待審核結果");
         // 清除 sessionStorage 並導向首頁
-        sessionStorage.removeItem("xboxPlayer");
+        sessionStorage.removeItem("minecraftUsername");
         setLocation("/");
       } else {
         toast.error(result.error || "申請提交失敗");
@@ -112,7 +92,7 @@ export default function ApplicationForm() {
     );
   }
 
-  if (!player) {
+  if (!username) {
     return null;
   }
 
@@ -129,7 +109,7 @@ export default function ApplicationForm() {
         <Button
           variant="ghost"
           onClick={() => {
-            sessionStorage.removeItem("xboxPlayer");
+            sessionStorage.removeItem("minecraftUsername");
             setLocation("/");
           }}
           className="text-black hover:bg-gray-100"
@@ -140,19 +120,7 @@ export default function ApplicationForm() {
         {/* 標題 */}
         <div className="space-y-2">
           <h1 className="text-3xl font-bold text-black">申請加入 Pizza MC</h1>
-          <div className="flex items-center gap-3">
-            {player.profilePicture && (
-              <img
-                src={player.profilePicture}
-                alt={player.gamertag}
-                className="h-12 w-12 rounded-full"
-              />
-            )}
-            <div>
-              <p className="text-gray-600">玩家：<span className="font-mono font-semibold text-black">{player.gamertag}</span></p>
-              <p className="text-sm text-gray-500">Gamerscore: {player.gamerscore}</p>
-            </div>
-          </div>
+          <p className="text-gray-600">玩家：<span className="font-mono font-semibold text-black">{username}</span></p>
         </div>
 
         {/* 表單卡片 */}
