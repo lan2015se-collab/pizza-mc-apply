@@ -199,10 +199,16 @@
 
 
 ## 簡化功能 - 改為 Minecraft 用戶名稱輸入（無驗證）
-- [ ] 更新前端登錄表單 - 改為簡單的 Minecraft 用戶名稱輸入
-- [ ] 移除所有 OAuth2 和 Xbox 認證邏輯
-- [ ] 簡化後端申請流程 - 直接接受用戶名稱
-- [ ] 更新數據庫 schema - 改為存儲 Minecraft 用戶名稱
-- [ ] 本地測試簡化流程
-- [ ] 推送代碼到 GitHub
-- [ ] 驗證 Render 部署
+- [x] 更新前端登錄表單 - 改為簡單的 Minecraft 用戶名稱輸入
+- [x] 移除所有 OAuth2 和 Xbox 認證邏輯
+- [x] 簡化申請表單 - 直接使用用戶名稱
+- [x] 本地測試簡化流程 - 所有 35 個測試通過
+- [x] 推送代碼到 GitHub - 已提交
+- [ ] 驗證 Render 部署 - 待部署完成
+
+
+## 待完成 - 清理未使用的 Xbox/OAuth 代碼
+- [ ] 移除或停用 routers.ts 中的 Xbox/OAuth 端點
+- [ ] 刪除未使用的服務文件（xbox-oauth-service.ts 等）
+- [ ] 添加 Minecraft 用戶名稱流程的單元測試
+- [ ] 驗證 Render 部署上的 Minecraft 用戶名稱登錄功能
