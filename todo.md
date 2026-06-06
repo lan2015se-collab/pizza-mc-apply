@@ -212,3 +212,10 @@
 - [ ] 刪除未使用的服務文件（xbox-oauth-service.ts 等）
 - [ ] 添加 Minecraft 用戶名稱流程的單元測試
 - [ ] 驗證 Render 部署上的 Minecraft 用戶名稱登錄功能
+
+
+## 修復 - Render 部署問題
+- [x] 修復服務器監聽地址 - 改為在生產環境中監聽 0.0.0.0
+- [x] 保存 checkpoint - 版本 1d02e89a
+- [ ] 驗證 Render 部署是否正常啟動
+- [ ] 驗證 Minecraft 用戶名稱登錄功能是否正常
