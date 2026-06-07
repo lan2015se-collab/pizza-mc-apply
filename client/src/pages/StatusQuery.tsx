@@ -62,14 +62,14 @@ export default function StatusQuery() {
       <div className="max-w-2xl mx-auto">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-slate-900 mb-2">查詢申請狀態</h1>
-          <p className="text-slate-600">輸入您的 Xbox Gamertag 查詢申請進度</p>
+          <p className="text-slate-600">輸入您的 Minecraft 玩家名稱查詢申請進度</p>
         </div>
 
         {/* 搜尋表單 */}
         <Card className="p-6 mb-6 shadow-lg">
           <div className="flex gap-2">
             <Input
-              placeholder="輸入您的 Xbox Gamertag"
+              placeholder="輸入您的 Minecraft 玩家名稱"
               value={gamertag}
               onChange={(e) => setGamertag(e.target.value)}
               onKeyPress={(e) => e.key === "Enter" && handleSearch()}

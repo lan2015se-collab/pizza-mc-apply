@@ -163,12 +163,23 @@ export default function ApplicationForm() {
               onCheckedChange={(checked) => setNotionChecked(checked as boolean)}
               className="mt-1"
             />
-            <label
-              htmlFor="notion-check"
-              className="text-base text-gray-700 cursor-pointer leading-relaxed"
-            >
-              我已閱讀 Notion 資訊頁面並同意伺服器規則
-            </label>
+            <div className="flex-1">
+              <label
+                htmlFor="notion-check"
+                className="text-base text-gray-700 cursor-pointer leading-relaxed"
+              >
+                我已閱讀 Notion 資訊頁面並同意伺服器規則
+              </label>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => window.open("https://pizza-mc.notion.site/PIZZA-MINECRAFT-Server-372316fe42868087b102dd4fc0186834?source", "_blank")}
+                className="mt-2"
+              >
+                檢視 Notion 資訊
+              </Button>
+            </div>
           </div>
 
           {/* 提交按鈕 */}

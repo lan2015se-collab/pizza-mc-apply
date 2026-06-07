@@ -98,34 +98,32 @@ export default function PlayerList() {
                   <div className="flex items-center justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-3">
-                        <div className="bg-black text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold">
-                          {index + 1}
-                        </div>
+                        <span className="text-lg font-semibold text-gray-500 w-8">
+                          #{index + 1}
+                        </span>
                         <div>
                           <p className="text-lg font-semibold text-black">
                             {player.gamertag}
                           </p>
                           <p className="text-sm text-gray-600">
-                            加入日期：{formatDate(player.joinedAt)}
+                            加入於 {formatDate(player.joinedAt)}
                           </p>
+                          {player.reason && (
+                            <p className="text-sm text-gray-700 mt-1 italic">
+                              "{player.reason}"
+                            </p>
+                          )}
                         </div>
                       </div>
                     </div>
                   </div>
-                  {player.reason && (
-                    <div className="mt-3 pt-3 border-t border-gray-200">
-                      <p className="text-sm text-gray-700">
-                        <span className="font-semibold">申請原因：</span> {player.reason}
-                      </p>
-                    </div>
-                  )}
                 </Card>
               ))}
             </div>
           ) : (
             <Card className="bg-gray-50 border border-gray-200 p-8 text-center">
-              <p className="text-gray-600">
-                {searchQuery ? "未找到符合條件的玩家" : "暫無已批准的玩家"}
+              <p className="text-gray-600 text-lg">
+                {searchQuery ? "未找到符合的玩家" : "暫無已批准的玩家"}
               </p>
             </Card>
           )}
@@ -134,17 +132,11 @@ export default function PlayerList() {
         {/* 伺服器資訊 */}
         <Card className="bg-gray-50 border border-gray-200 p-6 space-y-4">
           <h3 className="text-xl font-bold text-black">伺服器資訊</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <p className="text-sm text-gray-600 mb-1">伺服器地址</p>
-              <p className="text-base font-mono text-black font-semibold">
-                pizza-mc.aternos.me
-              </p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-600 mb-1">連接埠</p>
-              <p className="text-base font-mono text-black font-semibold">23775</p>
-            </div>
+          <div>
+            <p className="text-sm text-gray-600 mb-1">伺服器網址</p>
+            <p className="text-base font-mono text-black font-semibold">
+              pizza-mc.aternos.me
+            </p>
           </div>
           <div className="pt-4 border-t border-gray-200">
             <p className="text-sm text-gray-700">

@@ -42,7 +42,11 @@ export default function AdminDashboard() {
     setError(null);
 
     try {
-      const response = await fetch("/api/trpc/admin.getStats");
+      const response = await fetch("/api/trpc/admin.getStats", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password }),
+      });
       const data = await response.json();
 
       if (data.result?.data?.success) {

@@ -16,9 +16,12 @@ export default function AdminPanel() {
   const [notificationEmail, setNotificationEmail] = useState("");
 
   // 獲取所有申請
-  const { data: applicationsData, isLoading, refetch } = trpc.application.list.useQuery(undefined, {
-    enabled: isAuthenticated,
-  });
+  const { data: applicationsData, isLoading, refetch } = trpc.application.list.useQuery(
+    { password },
+    {
+      enabled: isAuthenticated,
+    }
+  );
   const approveMutation = trpc.application.approve.useMutation();
   const rejectMutation = trpc.application.reject.useMutation();
 
@@ -46,6 +49,7 @@ export default function AdminPanel() {
 
     try {
       const result = await approveMutation.mutateAsync({
+        password,
         applicationId: selectedApp.id,
       });
 
@@ -70,6 +74,7 @@ export default function AdminPanel() {
 
     try {
       const result = await rejectMutation.mutateAsync({
+        password,
         applicationId: selectedApp.id,
         reason: rejectionReason,
       });

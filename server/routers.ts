@@ -22,16 +22,7 @@ import { getApplicationStats } from "./db-stats";
  * 管理員專用 procedure
  * 檢查用戶是否為管理員
  */
-const adminProcedure = publicProcedure.use(async ({ ctx, next }) => {
-  // 檢查用戶是否為管理員
-  if (!ctx.user || ctx.user.role !== "admin") {
-    throw new TRPCError({
-      code: "FORBIDDEN",
-      message: "Only administrators can perform this action",
-    });
-  }
-  return next({ ctx });
-});
+// 已移除 adminProcedure，改用密碼驗證
 
 export const appRouter = router({
   system: systemRouter,
@@ -167,7 +158,7 @@ export const appRouter = router({
     submit: publicProcedure
       .input(z.object({
         gamertag: z.string().min(1),
-        xboxAccountId: z.string().min(1),
+        xboxAccountId: z.string().optional(),
         reason: z.string().min(1),
         aerternosUsername: z.string().optional(),
         applicantEmail: z.string().email().optional(),
@@ -186,7 +177,7 @@ export const appRouter = router({
           // 建立新申請
           const result = await createApplication({
             gamertag: input.gamertag,
-            xboxAccountId: input.xboxAccountId,
+            xboxAccountId: input.xboxAccountId || "",
             reason: input.reason,
             aerternosUsername: input.aerternosUsername,
             applicantEmail: input.applicantEmail,
@@ -208,31 +199,50 @@ export const appRouter = router({
     /**
      * 獲取所有申請（管理員功能）
      */
-    list: adminProcedure.query(async () => {
-      try {
-        const applications = await getApplications();
-        return {
-          success: true,
-          data: applications,
-        };
-      } catch (error) {
-        console.error("Failed to get applications:", error);
-        return {
-          success: false,
-          error: error instanceof Error ? error.message : "Unknown error",
-        };
-      }
-    }),
+    list: publicProcedure
+      .input(z.object({
+        password: z.string(),
+      }))
+      .query(async ({ input }) => {
+        try {
+          // 驗證管理員密碼
+          if (input.password !== "pizzahut") {
+            return {
+              success: false,
+              error: "密碼錯誤",
+            };
+          }
+          const applications = await getApplications();
+          return {
+            success: true,
+            data: applications,
+          };
+        } catch (error) {
+          console.error("Failed to get applications:", error);
+          return {
+            success: false,
+            error: error instanceof Error ? error.message : "Unknown error",
+          };
+        }
+      }),
 
     /**
      * 批准申請並發送通知郵件
      * 管理員專用
      */
-    approve: adminProcedure
+    approve: publicProcedure
       .input(z.object({
+        password: z.string(),
         applicationId: z.number(),
       }))
       .mutation(async ({ input }) => {
+        // 驗證管理員密碼
+        if (input.password !== "pizzahut") {
+          return {
+            success: false,
+            error: "密碼錯誤",
+          };
+        }
         try {
           const app = await getApplicationById(input.applicationId);
           if (!app) {
@@ -271,12 +281,20 @@ export const appRouter = router({
      * 拒絕申請並發送通知郵件
      * 管理員專用
      */
-    reject: adminProcedure
+    reject: publicProcedure
       .input(z.object({
+        password: z.string(),
         applicationId: z.number(),
         reason: z.string(),
       }))
       .mutation(async ({ input }) => {
+        // 驗證管理員密碼
+        if (input.password !== "pizzahut") {
+          return {
+            success: false,
+            error: "密碼錯誤",
+          };
+        }
         try {
           const app = await getApplicationById(input.applicationId);
           if (!app) {
@@ -417,27 +435,39 @@ export const appRouter = router({
   }),
   // 管理員統計
   admin: router({
-    getStats: adminProcedure.query(async () => {
-      try {
-        const stats = await getApplicationStats();
-        if (!stats) {
+    getStats: publicProcedure
+      .input(z.object({
+        password: z.string(),
+      }))
+      .query(async ({ input }) => {
+        try {
+          // 驗證管理員密碼
+          if (input.password !== "pizzahut") {
+            return {
+              success: false,
+              error: "密碼錯誤",
+            };
+          }
+
+          const stats = await getApplicationStats();
+          if (!stats) {
+            return {
+              success: false,
+              error: "無法獲取統計數據",
+            };
+          }
+          return {
+            success: true,
+            data: stats,
+          };
+        } catch (error) {
+          console.error("Failed to get admin stats:", error);
           return {
             success: false,
-            error: "無法獲取統計數據",
+            error: error instanceof Error ? error.message : "Unknown error",
           };
         }
-        return {
-          success: true,
-          data: stats,
-        };
-      } catch (error) {
-        console.error("Failed to get admin stats:", error);
-        return {
-          success: false,
-          error: error instanceof Error ? error.message : "Unknown error",
-        };
-      }
-    }),
+      }),
   }),
 });
 export type AppRouter = typeof appRouter;
